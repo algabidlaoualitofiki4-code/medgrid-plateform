@@ -1,0 +1,88 @@
+syntax = "proto3";
+
+package medgrid.telemetry.v1;
+
+option java_multiple_files = true;
+option java_package = "com.medgrid.telemetry.v1";
+option java_outer_classname = "TelemetryProto";
+
+import "google/protobuf/timestamp.proto";
+
+service TelemetryService {
+  rpc CheckBedAvailability (BedQuery) returns (BedAvailability);
+  rpc ReserveBed (ReserveBedRequest) returns (BedReservation);
+  rpc ReleaseBed (ReleaseBedRequest) returns (ReleaseBedResponse);
+  rpc StreamVitals (VitalsFilter) returns (stream VitalSign);
+  rpc IngestVitals (stream VitalSign) returns (IngestSummary);
+}
+
+enum BedStatus {
+  BED_STATUS_UNSPECIFIED = 0;
+  LIBRE = 1;
+  OCCUPE = 2;
+  NETTOYAGE = 3;
+  HORS_SERVICE = 4;
+}
+
+enum VitalType {
+  VITAL_TYPE_UNSPECIFIED = 0;
+  HEART_RATE = 1;
+  SPO2 = 2;
+  BLOOD_PRESSURE_SYS = 3;
+  BLOOD_PRESSURE_DIA = 4;
+  TEMPERATURE = 5;
+}
+
+message BedQuery {
+  string unit_id = 1;
+}
+
+message BedAvailability {
+  string unit_id = 1;
+  int32 available_count = 2;
+  repeated string available_bed_ids = 3;
+}
+
+message ReserveBedRequest {
+  string unit_id = 1;
+  string admission_id = 2;
+  string patient_id = 3;
+  string preferred_bed_id = 4;
+}
+
+message BedReservation {
+  string reservation_id = 1;
+  string bed_id = 2;
+  string unit_id = 3;
+  BedStatus status = 4;
+  google.protobuf.Timestamp reserved_at = 5;
+}
+
+message ReleaseBedRequest {
+  string bed_id = 1;
+  string admission_id = 2;
+}
+
+message ReleaseBedResponse {
+  string bed_id = 1;
+  BedStatus new_status = 2;
+}
+
+message VitalsFilter {
+  repeated string bed_ids = 1;
+}
+
+message VitalSign {
+  string bed_id = 1;
+  string patient_id = 2;
+  VitalType type = 3;
+  double value = 4;
+  string unit = 5;
+  google.protobuf.Timestamp measured_at = 6;
+}
+
+message IngestSummary {
+  int64 received_count = 1;
+  int64 persisted_count = 2;
+  int64 rejected_count = 3;
+}

@@ -1,0 +1,57 @@
+asyncapi: 2.6.0
+info:
+  title: MedGrid Events Contract
+  version: 1.0.0
+  description: Événements échangés via RabbitMQ (exchange medgrid.events, type topic)
+defaultContentType: application/json
+channels:
+  admission.creee:
+    publish:
+      message:
+        payload:
+          type: object
+          required: [eventId, eventType, occurredAt, payload]
+          properties:
+            eventId: { type: string, format: uuid }
+            eventType: { type: string, const: admission.creee }
+            occurredAt: { type: string, format: date-time }
+            traceId: { type: string }
+            payload:
+              type: object
+              required: [admissionId, patientId, type, statut]
+  admission.cloturee:
+    publish:
+      message:
+        payload:
+          type: object
+          required: [eventId, eventType, occurredAt, payload]
+  mesure.recue:
+    publish:
+      message:
+        payload:
+          type: object
+          required: [eventId, eventType, occurredAt, payload]
+  alerte.levee:
+    publish:
+      message:
+        payload:
+          type: object
+          required: [eventId, eventType, occurredAt, payload]
+  rdv.rappel:
+    publish:
+      message:
+        payload:
+          type: object
+          required: [eventId, eventType, occurredAt, payload]
+  facture.emise:
+    publish:
+      message:
+        payload:
+          type: object
+          required: [eventId, eventType, occurredAt, payload]
+  audit.acces:
+    publish:
+      message:
+        payload:
+          type: object
+          required: [eventId, eventType, occurredAt, payload]

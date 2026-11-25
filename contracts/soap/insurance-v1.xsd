@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:tns="http://medgrid.example/insurance/v1"
+           targetNamespace="http://medgrid.example/insurance/v1"
+           elementFormDefault="qualified">
+
+    <xs:simpleType name="FaultCodeType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="INVALID_POLICY"/>
+            <xs:enumeration value="CEILING_EXCEEDED"/>
+            <xs:enumeration value="COVERAGE_REFUSED"/>
+            <xs:enumeration value="INVALID_CLAIM"/>
+            <xs:enumeration value="CLAIM_ALREADY_CLOSED"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:element name="InsuranceFaultDetail">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="code" type="tns:FaultCodeType"/>
+                <xs:element name="message" type="xs:string"/>
+                <xs:element name="traceId" type="xs:string" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="VerifyCoverageRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="insuredNumber" type="xs:string"/>
+                <xs:element name="actCode" type="xs:string"/>
+                <xs:element name="careDate" type="xs:date"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="VerifyCoverageResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="eligible" type="xs:boolean"/>
+                <xs:element name="mutuelleCode" type="xs:string"/>
+                <xs:element name="coverageRate" type="xs:decimal"/>
+                <xs:element name="remainingCeiling" type="xs:decimal"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="RequestPreApprovalRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="insuredNumber" type="xs:string"/>
+                <xs:element name="actCode" type="xs:string"/>
+                <xs:element name="estimatedAmount" type="xs:decimal"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="RequestPreApprovalResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="approvalNumber" type="xs:string"/>
+                <xs:element name="claimNumber" type="xs:string"/>
+                <xs:element name="coveredAmount" type="xs:decimal"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="GetClaimStatusRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="claimNumber" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="GetClaimStatusResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="claimNumber" type="xs:string"/>
+                <xs:element name="status" type="xs:string"/>
+                <xs:element name="reimbursedAmount" type="xs:decimal"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="CloseClaimRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="claimNumber" type="xs:string"/>
+                <xs:element name="finalAmount" type="xs:decimal"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="CloseClaimResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="confirmed" type="xs:boolean"/>
+                <xs:element name="closedAt" type="xs:dateTime"/>
+                <xs:element name="finalCoveredAmount" type="xs:decimal"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
