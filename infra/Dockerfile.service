@@ -1,0 +1,17 @@
+# Build stage (contexte = racine du monorepo)
+FROM maven:3.9.9-eclipse-temurin-17-alpine AS build
+ARG SERVICE_NAME
+WORKDIR /workspace
+COPY pom.xml .
+COPY contracts ./contracts
+COPY services ./services
+RUN mvn -pl services/${SERVICE_NAME} -am clean package -DskipTests
+
+# Runtime stage
+FROM eclipse-temurin:17-jre-alpine
+ARG SERVICE_NAME
+WORKDIR /app
+RUN addgroup -S medgrid && adduser -S medgrid -G medgrid
+COPY --from=build /workspace/services/${SERVICE_NAME}/target/*.jar app.jar
+USER medgrid
+ENTRYPOINT ["java", "-XX:+UseContainerSupport", "-XX:MaxRAMPercentage=75.0", "-jar", "app.jar"]
